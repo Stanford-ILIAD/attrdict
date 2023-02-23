@@ -2,6 +2,9 @@
 # AttrDict
 This package contains a generic dictionary `AttrDict`, which implements nested dictionaries that are easy to access, filter, combine, and write to.
 
+Installation: `pip install attr-dicts`:
+
+PyPI: https://pypi.org/project/attr-dicts/
 
 **Creation**: Let's say we want to store the following nested structure of arrays:
 ```angular2html
