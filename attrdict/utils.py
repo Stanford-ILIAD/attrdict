@@ -2,9 +2,8 @@ from attrdict import AttrDict
 from warnings import warn
 
 
-# use these, since they interact with the parameterized object
 def get_with_default(obj, attr, default, map_fn=None):
-    """
+    """ Get an argument from AttrDict with an optional default value
 
     Parameters
     ----------
@@ -62,9 +61,34 @@ def get_required(obj, attr):
     return out
 
 
-def get_cls_param_instance(params, cls_name, params_name, class_type, constructor=lambda cls, cls_params: cls(cls_params)):
-    cls = get_required(params, cls_name)
-    cls_params = params[params_name]
+def get_cls_param_instance(params, cls_name, params_name, class_type,
+                           constructor=lambda cls, cls_params: cls(cls_params)):
+    """ Instantiate an instance of a cls with some params, using a constructor (see default above).
+
+    Also implements class type checking.
+
+    Parameters
+    ----------
+    params: AttrDict
+        The params that hold both <cls> and <cls_params>
+    cls_name: str
+        where in params to find the cls
+    params_name: Optional[str]
+        where in params to find the params (None if using the root params)
+    class_type: cls
+        class type to check after instantiation.
+    constructor: Callable
+        constructor function that takes in cls, cls_params and outputs an instance.
+
+    Returns
+    -------
+
+    """
+    cls = params[cls_name]
+    if params_name is None:
+        cls_params = params
+    else:
+        cls_params = params[params_name]
 
     assert isinstance(cls_params, AttrDict), cls_params
 
@@ -73,9 +97,35 @@ def get_cls_param_instance(params, cls_name, params_name, class_type, constructo
     return obj
 
 
-def get_or_instantiate_cls(params: AttrDict, attr_name: str, class_type, cls_name="cls", params_name="params", constructor=lambda cls, cls_params: cls(cls_params)):
+def get_or_instantiate_cls(params: AttrDict, attr_name: str, class_type, cls_name="cls", params_name=None,
+                           constructor=lambda cls, cls_params: cls(cls_params)):
+    """ Creates an instance of a class using params if not already created.
+
+    Wraps <get_cls_param_instance>, to optionally check if the class has already been instantiated.
+    If params[attr_name] is already instantiated, this will return that.
+
+    Parameters
+    ----------
+    params: AttrDict
+        global params
+    attr_name: Optional[str]
+        Where is the attribute to look up, or None if params is the attribute.
+    class_type: cls
+        What class to enforce
+    cls_name: str
+        What attribute within params[attr_name][cls_name] should be a class
+    params_name: Optional[str]
+        What attribute within params[attr_name] to consider the params (or None if root params)
+    constructor: Callable
+        How to instantiate cls
+
+    Returns
+    -------
+    Instance of class_type
+
+    """
     if attr_name is not None and len(attr_name) > 0:
-        attr = get_required(params, attr_name)
+        attr = params[attr_name]
     else:
         attr = params
     if isinstance(attr, AttrDict):
@@ -83,4 +133,3 @@ def get_or_instantiate_cls(params: AttrDict, attr_name: str, class_type, cls_nam
     else:
         assert isinstance(attr, class_type)
         return attr
-
