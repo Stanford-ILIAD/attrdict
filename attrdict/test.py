@@ -4,6 +4,7 @@ from attrdict.utils import get_required
 if __name__ == '__main__':
     # just an example of how to instantiate
     dc = AttrDict(dict(
+        z='this should be removed',
         a=dict(
             b=1,
             c=2
@@ -14,6 +15,9 @@ if __name__ == '__main__':
     dc_1 = AttrDict(
         a=AttrDict(
             e=4
+        ),
+        z=AttrDict(
+            test=1
         )
     )
     print('dc_1:', dc_1.pprint(ret_string=True))
@@ -28,6 +32,8 @@ if __name__ == '__main__':
     assert 'a' in dc.keys()
     assert 'a/e' in combined.leaf_keys()
     assert 'a/e' not in dc.leaf_keys()
+
+    assert 'z/test' in combined.leaf_keys()
 
     # raises a key error
     try:

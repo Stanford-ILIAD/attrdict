@@ -28,8 +28,13 @@ class AttrDict(DotMap):
             key_split = key.split('/')
             curr_key = key_split[0]
             next_key = '/'.join(key_split[1:])
-            if curr_key not in self._map and curr_key != '_ipython_canary_method_should_not_exist_':
-                # automatically extend to new AttrDict on set
+            # reinitialize curr_key to an AttrDict() when...
+            # (1) the key is not present, and no ipy flag
+            # (2) the key is present but self[key] is not an AttrDict, and no ipy flag
+            if (curr_key not in self._map or
+                    not isinstance(self[curr_key], self.__class__)) \
+                    and curr_key != '_ipython_canary_method_should_not_exist_':
+                # automatically extend to new AttrDict on set,
                 self[curr_key] = self.__class__()
             self[curr_key][next_key] = value
         else:
@@ -132,6 +137,9 @@ class AttrDict(DotMap):
 
     def node_leaf_filter_keys(self, names):
         return self.node_leaf_filter(lambda key, value: key in names)
+
+    def node_leaf_without_keys(self, keys):
+        return self.node_leaf_filter(lambda k, v: k not in keys)
 
     def node_leaf_filter_keys_required(self, names, copy_nodes=False):
         """ Filter with both leaf and node names.
