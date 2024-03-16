@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "attr-dicts"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="Suneel Belkhale", email="belkhale@stanford.edu" },
 ]
@@ -20,3 +20,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/Stanford-ILIAD/attrdict"
 "Bug Tracker" = "https://github.com/Stanford-ILIAD/attrdict/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["attrdict"]

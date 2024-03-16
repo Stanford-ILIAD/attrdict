@@ -157,7 +157,7 @@ class AttrDict(DotMap):
         """
         out = AttrDict()
         for key in names:
-            out[key] = self >> key
+            out[key] = self[key]
             if copy_nodes and isinstance(out[key], AttrDict):
                 out[key] = out[key].leaf_copy()
         return out
@@ -339,7 +339,7 @@ class AttrDict(DotMap):
 
         d_combined = AttrDict()
         for k in leaf_keys:
-            values = [map_func(d >> k) for d in ds]
+            values = [map_func(d[k]) for d in ds]
             if pass_in_key_to_func:
                 d_combined[k] = func(k, values)
             else:
